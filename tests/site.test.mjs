@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+import {origin,site} from '../lib/site.mjs';
+import * as pages from '../src/pages.mjs';
+import {layout} from '../lib/site.mjs';
+test('all seven requested pages render one H1, unique titles, accessible main and matching canonical',()=>{const titles=new Set();for(const name of ['home','about','features','pricing','contact','privacy','terms']){const page=pages[name](),html=layout(page);assert.equal((html.match(/<h1[> ]/g)||[]).length,1);assert.ok(html.includes('id="main"'));assert.ok(html.includes('rel="canonical" href="'+origin()+page.path+'"'));assert.ok(!/[\u2013\u2014]/.test(html),'No long dashes');assert.ok(!html.includes('{{'),'No unresolved legal placeholders');titles.add(page.title);}assert.equal(titles.size,7);});
+test('origin rejects paths, credentials, query strings and unsafe schemes',()=>{for(const value of ['javascript:alert(1)','https://a.test/path','https://user:secret@a.test','https://a.test/?x=1'])assert.throws(()=>origin({SITE_URL:value}));assert.equal(origin({SITE_URL:'https://tagteam.example/'}),'https://tagteam.example');});
+test('APK is the original signed V1.6 artifact',()=>{const bytes=fs.readFileSync(new URL('../public'+site.apkPath,import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),site.apkSha256);assert.equal(bytes.length,5475338);});
+test('legal pages and pricing preserve requested offer and shared-record limitations',()=>{const terms=pages.terms().body,privacy=pages.privacy().body,pricing=pages.pricing().body;assert.match(terms,/R49 per month per user/);assert.match(terms,/R98 per month/);assert.match(pricing,/No credit card details required/);assert.match(privacy,/do not describe TagTeam as end-to-end encrypted/);assert.match(privacy,/files already exported/);});

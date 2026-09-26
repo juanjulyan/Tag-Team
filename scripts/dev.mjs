@@ -1,0 +1,10 @@
+import {createServer} from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../dist');
+const port=Number(process.env.PORT||3000);
+const config=JSON.parse(await fs.readFile(new URL('../vercel.json',import.meta.url),'utf8'));
+const security=config.headers.find(item=>item.source==='/(.*)').headers;
+const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.webp':'image/webp','.png':'image/png','.woff2':'font/woff2','.xml':'application/xml','.txt':'text/plain; charset=utf-8','.apk':'application/vnd.android.package-archive'};
+createServer(async(req,res)=>{try{for(const header of security)res.setHeader(header.key,header.value.replace('; upgrade-insecure-requests',''));const url=new URL(req.url,'http://localhost');if(['/api/contact','/api/contact/'].includes(url.pathname)){const {default:handler}=await import('../api/contact.mjs');return handler(req,res);}const clean=decodeURIComponent(url.pathname);let target=path.resolve(root,'.'+clean);if(!target.startsWith(root+path.sep)&&target!==root){res.writeHead(403);return res.end();}if(!path.extname(target))target=path.join(target,'index.html');let code=200,data;try{data=await fs.readFile(target);}catch{target=path.join(root,'404.html');data=await fs.readFile(target);code=404;}res.writeHead(code,{'Content-Type':mime[path.extname(target)]||'application/octet-stream','Cache-Control':'no-store'});if(req.method==='HEAD')return res.end();res.end(data);}catch{res.writeHead(500);res.end('Unable to serve this request.');}}).listen(port,'0.0.0.0',()=>console.log(`TagTeam preview: http://localhost:${port}`));

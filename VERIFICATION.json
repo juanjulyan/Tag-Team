@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-26",
+  "pages": 7,
+  "viewports": [
+    1440,
+    768,
+    390,
+    320
+  ],
+  "page_viewport_checks": 28,
+  "browser_errors": [],
+  "automated_tests": 12,
+  "checks": [
+    "Internal links and fragment targets",
+    "HTML page titles, one H1 per page, canonical and JSON-LD",
+    "Sitemap has all seven public pages",
+    "Font and responsive imagery load",
+    "Mobile menu and pricing navigation",
+    "Contact validation, fixed recipient, Reply-To and idempotency",
+    "Contact errors and simulated delivery success",
+    "Optional Turnstile action and hostname verification",
+    "Original signed APK SHA256"
+  ],
+  "apk_sha256": "7f7414eca6e90f8ebf724705ae47821d08174ab2fe4eb2ea89c32e1ea4c682de",
+  "limitations": [
+    "No live Vercel deployment performed; repository/account access was not supplied.",
+    "Email API calls were simulated; live delivery requires Resend configuration.",
+    "The bundled APK has no commercial trial/billing enforcement; integrate before a paid launch.",
+    "Legal details and proposed retention targets require operator review."
+  ]
+}
