@@ -2,12 +2,13 @@
   "name": "TagTeam",
   "tagline": "Two homes. One team.",
   "description": "A co-parenting app that brings shared schedules, expenses, medical records and family documents together. Built for two parents and the children they love.",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "minimumAndroid": "8.0",
-  "apkPath": "/downloads/TagTeam-1.6.apk",
-  "apkSha256": "7f7414eca6e90f8ebf724705ae47821d08174ab2fe4eb2ea89c32e1ea4c682de",
+  "apkPath": "/downloads/TagTeam-Public-2.0.0.apk",
+  "apkSha256": "aa4cdf673c8f10b330092a00bbbfb5dd7e36261bdd4da4d49f712a1d3895f10f",
   "trialDays": 7,
   "monthlyPrice": 49,
   "currency": "ZAR",
-  "lastUpdated": "2026-09-26"
+  "lastUpdated": "2026-09-28",
+  "publicServiceReady": false
 }

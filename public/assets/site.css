@@ -10,3 +10,5 @@
 @media print{.site-header,.site-footer,.legal-nav,.cta-band,.menu-toggle{display:none}.container{width:100%}.page-intro{padding-top:0}.legal-layout{display:block}a{color:inherit}.legal-content h2{break-after:avoid}.legal-content p{orphans:3;widows:3}}
 
 .cf-turnstile{margin-bottom:22px}
+
+.release-notice{font-size:.86rem;line-height:1.7;color:var(--muted);margin-top:14px}.download-panel .release-notice{border-left:3px solid var(--orange);padding:9px 0 9px 13px;margin:14px 0 20px;font-size:.84rem}.hero .release-notice{font-size:.8rem;margin-top:9px}.contact-aside p+p{margin-top:15px}

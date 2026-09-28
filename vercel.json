@@ -20,9 +20,9 @@
       ]
     },
     { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }] },
-    { "source": "/downloads/TagTeam-1.6.apk", "headers": [
+    { "source": "/downloads/TagTeam-Public-2.0.0.apk", "headers": [
       { "key": "Content-Type", "value": "application/vnd.android.package-archive" },
-      { "key": "Content-Disposition", "value": "attachment; filename=\"TagTeam-1.6.apk\"" },
+      { "key": "Content-Disposition", "value": "attachment; filename=\"TagTeam-Public-2.0.0.apk\"" },
       { "key": "X-Robots-Tag", "value": "noindex" }
     ] },
     { "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }, { "key": "X-Robots-Tag", "value": "noindex" }] }

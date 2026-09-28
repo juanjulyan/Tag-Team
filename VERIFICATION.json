@@ -1,5 +1,6 @@
 {
-  "date": "2026-09-26",
+  "date": "2026-09-28",
+  "app_version": "2.0.0",
   "pages": 7,
   "viewports": [
     1440,
@@ -9,23 +10,24 @@
   ],
   "page_viewport_checks": 28,
   "browser_errors": [],
-  "automated_tests": 12,
+  "automated_tests": 13,
   "checks": [
-    "Internal links and fragment targets",
-    "HTML page titles, one H1 per page, canonical and JSON-LD",
-    "Sitemap has all seven public pages",
-    "Font and responsive imagery load",
-    "Mobile menu and pricing navigation",
-    "Contact validation, fixed recipient, Reply-To and idempotency",
-    "Contact errors and simulated delivery success",
-    "Optional Turnstile action and hostname verification",
-    "Original signed APK SHA256"
+    "28 page/viewport checks with no horizontal overflow",
+    "All internal links and section anchors",
+    "Responsive image/font loading, one H1, canonical links and JSON-LD",
+    "Mobile menu, pricing navigation and installation details",
+    "Signed public APK binary, MIME type and published checksum",
+    "Old private APK is not served",
+    "Production sitemap and V2 discovery facts",
+    "Contact required fields and unconfigured-delivery error",
+    "Contact simulated success; no live enquiries sent",
+    "Updated fixed support recipient and safe Reply-To verified in Node tests"
   ],
-  "apk_sha256": "7f7414eca6e90f8ebf724705ae47821d08174ab2fe4eb2ea89c32e1ea4c682de",
   "limitations": [
-    "No live Vercel deployment performed; repository/account access was not supplied.",
-    "Email API calls were simulated; live delivery requires Resend configuration.",
-    "The bundled APK has no commercial trial/billing enforcement; integrate before a paid launch.",
-    "Legal details and proposed retention targets require operator review."
-  ]
+    "No GitHub push or Vercel deployment performed; account/repository access was not supplied.",
+    "Email delivery used failure and mocked-success checks; live delivery requires Resend configuration.",
+    "Public app cloud services remain owner-configured; website status is set to preparing to launch.",
+    "Operator details and proposed retention procedures require completion before a paid launch."
+  ],
+  "apk_sha256": "aa4cdf673c8f10b330092a00bbbfb5dd7e36261bdd4da4d49f712a1d3895f10f"
 }
