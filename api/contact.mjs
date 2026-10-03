@@ -76,7 +76,7 @@ function respond(req,res,status,data){
  const title=data.ok?'Thank you. Your enquiry has been sent.':'Your enquiry could not be sent.';
  const message=data.ok?'Juan will reply to the email address you provided.':data.error;
  res.setHeader('Content-Type','text/html; charset=utf-8');
- res.end(`<!doctype html><html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${title} | TagTeam</title><link rel="stylesheet" href="/assets/site.css"><link rel="icon" href="/favicon.svg"></head><body><main class="container section error-page"><p class="eyebrow">TagTeam</p><h1>${title}</h1><p>${escape(message)}</p><a class="button" href="/contact/">Back to Contact Us</a></main></body></html>`);
+ res.end(`<!doctype html><html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${title} | TagTeam</title><link rel="stylesheet" href="/assets/site.css"><link rel="icon" href="/favicon.png"></head><body><main class="container section error-page"><p class="eyebrow">TagTeam</p><h1>${title}</h1><p>${escape(message)}</p><a class="button" href="/contact/">Back to Contact Us</a></main></body></html>`);
 }
 export default async function handler(req,res){
  if(req.method!=='POST'){res.setHeader('Allow','POST');return respond(req,res,405,{ok:false,error:'Use the contact form to send an enquiry.'});}

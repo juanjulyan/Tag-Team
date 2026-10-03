@@ -1,49 +1,28 @@
 import fs from 'node:fs/promises';
-import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {layout,origin,site,entity} from '../lib/site.mjs';
+import {layout,origin,site,entity,escape,validateStoreUrl} from '../lib/site.mjs';
+import {allFaqs} from '../src/faqs.mjs';
 import * as pages from '../src/pages.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'dist');
-if(typeof site.publicServiceReady!=='boolean')throw new Error('Set publicServiceReady to true or false in config/site.json.');
-if(!/^\/downloads\/[A-Za-z0-9.-]+\.apk$/.test(site.apkPath))throw new Error('APK path must name an APK in public/downloads.');
-const apk=await fs.readFile(path.join(root,'public',site.apkPath));
-if(createHash('sha256').update(apk).digest('hex')!==site.apkSha256)throw new Error('APK checksum does not match config/site.json.');
+if(typeof site.publicServiceReady!=='boolean')throw new Error('publicServiceReady must be a boolean.');
+if(!Number.isInteger(site.trialDays)||site.trialDays<1)throw new Error('trialDays must be a positive integer.');
+if(!Number.isFinite(site.monthlyPrice)||site.monthlyPrice<0)throw new Error('monthlyPrice must be a valid price.');
+validateStoreUrl(site.appStoreUrl,'apple');validateStoreUrl(site.googlePlayUrl,'google');
 await fs.rm(out,{recursive:true,force:true});await fs.mkdir(out,{recursive:true});
 await fs.cp(path.join(root,'public'),out,{recursive:true});
-const available=['home','about','features','pricing','contact','privacy','terms','notFound'];
 const routes=[];
-for(const name of available){if(!pages[name])continue;const page=pages[name]();if(['home','pricing'].includes(name)){const items=name==='home'?pages.homeFaq:pages.pricingFaq;page.schema=[...(page.schema||[]),{'@type':'FAQPage','@id':origin()+page.path+'#faq',mainEntity:items.map(([question,answer])=>({'@type':'Question',name:question,acceptedAnswer:{'@type':'Answer',text:answer}}))}];}const file=page.noindex?path.join(out,'404.html'):path.join(out,page.path,'index.html');await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,layout(page));if(!page.noindex)routes.push(page.path);}
+for(const name of ['home','about','features','pricing','faqs','download','contact','privacy','terms','notFound']){
+ const page=pages[name](),file=page.noindex?path.join(out,'404.html'):path.join(out,page.path,'index.html');
+ await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,layout(page));
+ if(!page.noindex)routes.push(page.path);
+}
 const base=origin();
-await fs.writeFile(path.join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map(route=>`  <url><loc>${base}${route}</loc><lastmod>${site.lastUpdated}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+const sitemap=`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map(route=>`  <url><loc>${escape(base+route)}</loc><lastmod>${site.lastUpdated}</lastmod></url>`).join('\n')}\n</urlset>\n`;
+await fs.writeFile(path.join(out,'sitemap.xml'),sitemap);
+await fs.writeFile(path.join(root,'sitemap.xml'),sitemap);
 await fs.writeFile(path.join(out,'robots.txt'),process.env.VERCEL_ENV==='preview'?'User-agent: *\nDisallow: /\n':`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${base}/sitemap.xml\n`);
-await fs.writeFile(path.join(out,'downloads','SHA256.txt'),`${site.apkSha256}  ${path.basename(site.apkPath)}\n`);
-console.log(`Built ${routes.length} pages, 404, sitemap and robots for ${base}`);
-
-await fs.writeFile(path.join(out,'llms.txt'),`# TagTeam
-
-> TagTeam is an Android co-parenting app for two connected parents, created by Juan Julyan in Cape Town, South Africa.
-
-## Product facts
-- Android 8.0 and later. Current version: ${site.version}.
-- Shared events, configurable care routines, expenses with receipt recognition, payment confirmations, contribution reports, medical history with approval workflows, documents and searchable activity.
-- Public service status: ${site.publicServiceReady?'open for registration':'preparing to launch; APK download available, registration, sync and subscriptions not open yet'}.
-- Each parent signs up, verifies their own email and activates their account. One parent creates a two-parent family and invites the other with an email-bound, single-use code. One family per account.
-- New shared updates require active trial or paid access, internet and a successful sync.
-- Seven-day free trial begins on verified account activation without payment details or automatic conversion. After expiry, the parent can explicitly choose a Payfast subscription: R${site.monthlyPrice} initially, then R${site.monthlyPrice} monthly per user until cancelled. Two subscribed parents cost R${site.monthlyPrice*2} monthly in total.
-- Cancel future renewal in Family > Subscription; confirmed cancellation retains paid access until the period ends. Support is available at ${entity.contactEmail}, including after expiry.
-- Optional approximate location provides local forecasts. The saved location stays on the phone, is sent for weather requests and is not shared with the other parent. No continuous location tracking. Schedules use South African time.
-- Family records use Supabase; uploaded files use private Azure storage with family access checks. In-app local records and files are encrypted. Explicit exports are ordinary files. The app is not end-to-end encrypted.
-- Public 2.0.0 installs separately from the previous private app and does not import its family data. An iPhone version is not currently available.
-- TagTeam records payments between parents but does not transfer money.
-
-## Official pages
-${routes.map(route=>`- [${route==='/'?'Home':route.split('/')[1]}](${base}${route})`).join('\n')}
-
-## Downloads
-- [Android APK](${base}${site.apkPath})
-- [Sitemap](${base}/sitemap.xml)
-
-Use the linked pages for the full terms, feature details and current pricing.
-`);
+const strip=html=>html.replace(/<[^>]*>/g,'').replaceAll('&amp;','&');
+await fs.writeFile(path.join(out,'llms.txt'),`# TagTeam\n\n> ${site.description}\n\n## Product facts\n- Website and app reference version: ${site.version}. Updated ${site.lastUpdated}.\n- Created by Juan Julyan in Cape Town, South Africa.\n- Website offer: ${site.trialDays}-day free trial. No card needed. Trial does not automatically convert to a subscription. R${site.monthlyPrice}/month per user if they subscribe; R${site.monthlyPrice*2}/month for two subscribed parents.\n- ${site.publicServiceReady?'Public registration is open.':'Public registration is preparing to launch.'}\n- ${site.googlePlayUrl?'Google Play listing: '+site.googlePlayUrl:'Google Play listing is not yet linked.'}\n- ${site.appStoreUrl?'App Store listing: '+site.appStoreUrl:'iPhone release is not currently available; App Store listing is not yet linked.'}\n- Two linked parent accounts in one family per account. Separate email verification and subscription per parent.\n- Shared care routines, events, receipts, expenses, payment confirmations, contribution PDF reports, medical approvals, family documents and searchable activity.\n- Current Android app uses Payfast for subscriptions. Parents pay family expenses outside the app.\n- Optional weather location is not shared with the co-parent. No continuous tracking. Care routines use South African time.\n- Supabase records and private Azure file storage; current Android local files are encrypted. Not end-to-end encrypted. Exports are ordinary files.\n- Account and support contact: ${entity.contactEmail}.\n\n## Official pages\n${routes.map(route=>`- [${route==='/'?'Home':route.split('/')[1]}](${base+route})`).join('\n')}\n\n## Frequently asked questions\n${allFaqs.map(({q,a})=>`### ${q}\n${strip(a)}\n`).join('\n')}\nUse the official pages for current availability, full terms and privacy information.\n`);
+console.log(`Built ${routes.length} pages, 404, sitemap.xml, robots.txt and llms.txt for ${base}`);

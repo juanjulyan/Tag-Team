@@ -1,33 +1,81 @@
 {
-  "date": "2026-09-28",
-  "app_version": "2.0.0",
-  "pages": 7,
-  "viewports": [
-    1440,
-    768,
-    390,
-    320
+  "websiteVersion": "2.0.0",
+  "appReferenceVersion": "2.0.0",
+  "verifiedDate": "2026-10-03",
+  "build": {
+    "command": "npm run build (final equivalent: node scripts/build.mjs)",
+    "status": "passed",
+    "publicPages": 9,
+    "errorPage": true
+  },
+  "automatedTests": {
+    "command": "npm test",
+    "passed": 14,
+    "failed": 0,
+    "covers": [
+      "page metadata and schema",
+      "all local links, fragments and assets",
+      "store URL validation and unavailable states",
+      "trial, price and version consistency",
+      "all 40 FAQs",
+      "contact validation, recipient routing and mocked delivery responses"
+    ]
+  },
+  "browser": {
+    "engine": "Chromium 134 via Playwright",
+    "widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "routes": [
+      "/",
+      "/about/",
+      "/features/",
+      "/pricing/",
+      "/faq/",
+      "/download/",
+      "/contact/",
+      "/privacy/",
+      "/terms/"
+    ],
+    "initialPageViewportChecks": 36,
+    "focusedLayoutRetests": 12,
+    "resolvedIssues": [
+      "Homepage app-overview grid caused horizontal overflow at 320px. Fixed intrinsic grid sizing and compact week cells; retested.",
+      "Headline sizes reduced at <=350px to keep natural wrapping without forced line breaks."
+    ],
+    "remainingHorizontalOverflow": false,
+    "consoleErrors": 0,
+    "interactionsPassed": [
+      "Mobile menu opens and closes with Escape",
+      "Carousel previous/next buttons and slide selection",
+      "Carousel autoplay, pause on focus and keyboard arrows",
+      "FAQ keyword search, no-results message, clear and category filters",
+      "FAQ deep link opens its answer",
+      "Contact form with local mocked successful response",
+      "No-JavaScript navigation and all FAQ answers"
+    ]
+  },
+  "offer": {
+    "trialDays": 14,
+    "monthlyPricePerUserZAR": 49,
+    "twoPaidParentsZAR": 98
+  },
+  "deliveryState": {
+    "storeUrls": "Intentionally empty owner configuration; honest coming-soon panels",
+    "publicServiceReady": false,
+    "supportEmail": "juan@tagteam.co.za",
+    "apkIncluded": false
+  },
+  "notPerformed": [
+    "Live GitHub/Vercel deployment",
+    "Live email delivery (credentials not supplied)",
+    "Store publication or validation of unprovided store URLs",
+    "App or backend trial-duration update",
+    "Physical-device or Safari testing"
   ],
-  "page_viewport_checks": 28,
-  "browser_errors": [],
-  "automated_tests": 13,
-  "checks": [
-    "28 page/viewport checks with no horizontal overflow",
-    "All internal links and section anchors",
-    "Responsive image/font loading, one H1, canonical links and JSON-LD",
-    "Mobile menu, pricing navigation and installation details",
-    "Signed public APK binary, MIME type and published checksum",
-    "Old private APK is not served",
-    "Production sitemap and V2 discovery facts",
-    "Contact required fields and unconfigured-delivery error",
-    "Contact simulated success; no live enquiries sent",
-    "Updated fixed support recipient and safe Reply-To verified in Node tests"
-  ],
-  "limitations": [
-    "No GitHub push or Vercel deployment performed; account/repository access was not supplied.",
-    "Email delivery used failure and mocked-success checks; live delivery requires Resend configuration.",
-    "Public app cloud services remain owner-configured; website status is set to preparing to launch.",
-    "Operator details and proposed retention procedures require completion before a paid launch."
-  ],
-  "apk_sha256": "aa4cdf673c8f10b330092a00bbbfb5dd7e36261bdd4da4d49f712a1d3895f10f"
+  "research": "RESEARCH-SOURCES.md",
+  "assetSources": "IMAGE-CREDITS.md"
 }
